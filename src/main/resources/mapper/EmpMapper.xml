@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.house.dao.EmpMapper">
+  <resultMap id="BaseResultMap" type="com.example.house.entity.Emp">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="enumber" jdbcType="INTEGER" property="enumber" />
+    <result column="ename" jdbcType="VARCHAR" property="ename" />
+    <result column="ephone" jdbcType="VARCHAR" property="ephone" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="roleid" jdbcType="INTEGER" property="roleid" />
+    <result column="logoimg" jdbcType="VARCHAR" property="logoimg" />
+    <result column="eusername" jdbcType="VARCHAR" property="eusername" />
+    <result column="epassword" jdbcType="VARCHAR" property="epassword" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="edesc" jdbcType="VARCHAR" property="edesc" />
+    <result column="eqq" jdbcType="VARCHAR" property="eqq" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, enumber, ename, ephone, state, roleid, logoimg, eusername, epassword, email, 
+    edesc, eqq
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from employee
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from employee
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.example.house.entity.Emp">
+    insert into employee (id, enumber, ename, 
+      ephone, state, roleid, 
+      logoimg, eusername, epassword, 
+      email, edesc, eqq)
+    values (#{id,jdbcType=INTEGER}, #{enumber,jdbcType=INTEGER}, #{ename,jdbcType=VARCHAR}, 
+      #{ephone,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}, #{roleid,jdbcType=INTEGER}, 
+      #{logoimg,jdbcType=VARCHAR}, #{eusername,jdbcType=VARCHAR}, #{epassword,jdbcType=VARCHAR}, 
+      #{email,jdbcType=VARCHAR}, #{edesc,jdbcType=VARCHAR}, #{eqq,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.house.entity.Emp">
+    insert into employee
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="enumber != null">
+        enumber,
+      </if>
+      <if test="ename != null">
+        ename,
+      </if>
+      <if test="ephone != null">
+        ephone,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+      <if test="roleid != null">
+        roleid,
+      </if>
+      <if test="logoimg != null">
+        logoimg,
+      </if>
+      <if test="eusername != null">
+        eusername,
+      </if>
+      <if test="epassword != null">
+        epassword,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="edesc != null">
+        edesc,
+      </if>
+      <if test="eqq != null">
+        eqq,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="enumber != null">
+        #{enumber,jdbcType=INTEGER},
+      </if>
+      <if test="ename != null">
+        #{ename,jdbcType=VARCHAR},
+      </if>
+      <if test="ephone != null">
+        #{ephone,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="roleid != null">
+        #{roleid,jdbcType=INTEGER},
+      </if>
+      <if test="logoimg != null">
+        #{logoimg,jdbcType=VARCHAR},
+      </if>
+      <if test="eusername != null">
+        #{eusername,jdbcType=VARCHAR},
+      </if>
+      <if test="epassword != null">
+        #{epassword,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="edesc != null">
+        #{edesc,jdbcType=VARCHAR},
+      </if>
+      <if test="eqq != null">
+        #{eqq,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <!--  login-->
+  <select id="queryByEname" resultType="map">
+    select *
+    from employee
+    <where>
+
+      <if test="ename!=null and ename!=''">
+        and ename = #{ename}
+      </if>
+    </where>
+
+  </select>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.house.entity.Emp">
+    update employee
+    <set>
+      <if test="enumber != null">
+        enumber = #{enumber,jdbcType=INTEGER},
+      </if>
+      <if test="ename != null">
+        ename = #{ename,jdbcType=VARCHAR},
+      </if>
+      <if test="ephone != null">
+        ephone = #{ephone,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="roleid != null">
+        roleid = #{roleid,jdbcType=INTEGER},
+      </if>
+      <if test="logoimg != null">
+        logoimg = #{logoimg,jdbcType=VARCHAR},
+      </if>
+      <if test="eusername != null">
+        eusername = #{eusername,jdbcType=VARCHAR},
+      </if>
+      <if test="epassword != null">
+        epassword = #{epassword,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="edesc != null">
+        edesc = #{edesc,jdbcType=VARCHAR},
+      </if>
+      <if test="eqq != null">
+        eqq = #{eqq,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.house.entity.Emp">
+    update employee
+    set enumber = #{enumber,jdbcType=INTEGER},
+      ename = #{ename,jdbcType=VARCHAR},
+      ephone = #{ephone,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER},
+      roleid = #{roleid,jdbcType=INTEGER},
+      logoimg = #{logoimg,jdbcType=VARCHAR},
+      eusername = #{eusername,jdbcType=VARCHAR},
+      epassword = #{epassword,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      edesc = #{edesc,jdbcType=VARCHAR},
+      eqq = #{eqq,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
