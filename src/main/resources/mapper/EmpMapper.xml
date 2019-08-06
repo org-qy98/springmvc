@@ -16,11 +16,11 @@
     <result column="eqq" jdbcType="VARCHAR" property="eqq" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, enumber, ename, ephone, state, roleid, logoimg, eusername, epassword, email, 
+    id, enumber, ename, ephone, state, roleid, logoimg, eusername, epassword, email,
     edesc, eqq
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from employee
     where id = #{id,jdbcType=INTEGER}
@@ -30,13 +30,13 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.example.house.entity.Emp">
-    insert into employee (id, enumber, ename, 
-      ephone, state, roleid, 
-      logoimg, eusername, epassword, 
+    insert into employee (id, enumber, ename,
+      ephone, state, roleid,
+      logoimg, eusername, epassword,
       email, edesc, eqq)
-    values (#{id,jdbcType=INTEGER}, #{enumber,jdbcType=INTEGER}, #{ename,jdbcType=VARCHAR}, 
-      #{ephone,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}, #{roleid,jdbcType=INTEGER}, 
-      #{logoimg,jdbcType=VARCHAR}, #{eusername,jdbcType=VARCHAR}, #{epassword,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{enumber,jdbcType=INTEGER}, #{ename,jdbcType=VARCHAR},
+      #{ephone,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}, #{roleid,jdbcType=INTEGER},
+      #{logoimg,jdbcType=VARCHAR}, #{eusername,jdbcType=VARCHAR}, #{epassword,jdbcType=VARCHAR},
       #{email,jdbcType=VARCHAR}, #{edesc,jdbcType=VARCHAR}, #{eqq,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.example.house.entity.Emp">
@@ -124,10 +124,12 @@
     select *
     from employee
     <where>
-
-      <if test="ename!=null and ename!=''">
-        and ename = #{ename}
-      </if>
+        <if test="eusername!=null and eusername!=''">
+          and eusername=#{eusername}
+        </if>
+        <if test="epassword!=null and epassword!=''">
+          and epassword=#{epassword}
+        </if>
     </where>
 
   </select>
@@ -185,4 +187,48 @@
       eqq = #{eqq,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="queryAll" resultType="map" parameterType="map">
+    select e.*,d.sname
+    from employee e join  emp_state d on e.state=d.id
+    <where>
+      <if test="id!=null and id!=''">
+        and e.id={id}
+      </if>
+      <if test="ename!=null and ename!=''">
+        and (ename like "%"#{ename}"%"
+        or d.sname like "%"#{ename}"%")
+      </if>
+      <if test="enumber!=null and enumber!=''">
+        and e.enumber={enumber}
+      </if>
+      <if test="state!=null and state!=''">
+        and e.state=#{state}
+      </if>
+      <if test="ephone!=null and ephone!=''">
+        and e.ephone=#{ephone}
+      </if>
+      <if test="roleid!=null and roleid!=''">
+        and e.roleid=#{roleid}
+      </if>
+      <if test="logoimg!=null and logoimg!=''">
+        and e.logoimg=#{logoimg}
+      </if>
+      <if test="eusername!=null and eusername!=''">
+        and e.eusername=#{eusername}
+      </if>
+      <if test="epassword!=null and epassword=''">
+        and e.epassword=#{epassword}
+      </if>
+      <if test="email!=null and email=''">
+        and e.email=#{email}
+      </if>
+      <if test="edesc!=null and edesc=''">
+        and e.edesc=#{edesc}
+      </if>
+      <if test="eqq!=null and eqq=''">
+        and e.eqq=#{eqq}
+      </if>
+    </where>
+  </select>
 </mapper>

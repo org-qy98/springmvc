@@ -18,11 +18,11 @@
     <el-form :model="form">
 
         <el-form-item label="姓名" :label-width="formLabelWidth">
-            <el-input v-model="form.ename" autocomplete="off"></el-input>
+            <el-input v-model="form.eusername" autocomplete="off"></el-input>
         </el-form-item>
 
         <el-form-item label="密码" :label-width="formLabelWidth">
-            <el-input v-model="form.epassword" autocomplete="off"></el-input>
+            <el-input v-model="form.epassword" autocomplete="off" type="password"></el-input>
         </el-form-item>
 
     </el-form>
@@ -37,7 +37,7 @@
         el:"#app",
         data: {
             form: {
-                ename: '',
+                eusername: '',
                 epassword: '',
             },
             formLabelWidth: "120px"
@@ -58,19 +58,17 @@
                             //否则弹出错误信息
                             self.$message.error(msg);
                         }
-                    })
-                    .catch(function (error) {
+                    }).catch(function (error) {
                         // handle error
                         console.log(error);
-                    })
-                    .then(function () {
+                    }).then(function () {
                         // always executed
                     });
             },
             //重置方法flush 点击后清空表单
             flush: function () {
-                this.form.username = '';
-                this.form.password=''
+                this.form.eusername = '';
+                this.form.epassword=''
             }
         }
     });

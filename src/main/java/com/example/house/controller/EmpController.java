@@ -10,7 +10,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,53 +31,65 @@ public class EmpController {
     @Autowired
     private EmpService empService;
 
+    /**
+     * 注册
+     * @param record
+     * @return
+     */
     @RequestMapping("/insert")
     public int insert(Emp record){
         int result=empService.insert(record);
         return result;
     }
 
+    /**
+     * 获取session
+     * @param session
+     * @return
+     */
+    @RequestMapping("/session")
+    public Object getSession(HttpSession session){
+        return session.getAttribute("username");
+    }
+    /**
+     * 登录
+     * @param
+     * @return
+     */
     @RequestMapping("/login")
-    public Object login(@RequestBody Map map){
+    public Object login(Emp emp,HttpServletRequest request){
         //获取表单中的用户名，和密码参数
-
-        String ename=map.get("ename")+"";
-        String epassword =map.get("epassword")+"";
-        System.out.println(ename);
-        System.out.println(epassword);
-
-        Subject subject= SecurityUtils.getSubject();
-        //声明错误信息变量
-        String msg="";
-        if(ename!=null&&!"".equals(ename)) {
-            //密码加密
-            UsernamePasswordToken token = new UsernamePasswordToken(ename, epassword);
-            try {
-                subject.login(token);
-                msg="suc";
-            } catch (AuthenticationException exception) {
-                //清除session
-                token.clear();
-                //自定义信息
-                if (UnknownAccountException.class.getName().equals(exception+"")) {
-                    msg = "您输入的账号不存在~";
-                } else if (IncorrectCredentialsException.class.getName().equals(exception.getClass().getName())) {
-                    msg = "您输入的密码不正确~";
-                } else if (LockedAccountException.class.getName().equals(exception.getClass().getName()) ){
-                    msg = " 您的账号已经被锁定 无法登入系统~";
-                } else {
-                    msg = "账号或者密码错误~";
-                }
-
-            }
-        }
+//        String ename=map.get("eusername")+"";
+//        String epassword =map.get("epassword")+"";
+        System.out.println(emp.getEusername()+".............");
+        System.out.println(emp.getEpassword()+"............123........");
+        List<Emp> emps =  empService.queryName(emp);
         //将错误信息保存到mop中在前台获取
         Map mapTmp =new HashMap();
+        String msg="";
+        if(emps!=null&&emps.size()>0){
+            HttpSession session=request.getSession();
+            session.setAttribute("username",emps.get(0));
+            msg="suc";
+        }else{
+            msg="用户名或者密码错误！";
+        }
         mapTmp.put("msg",msg);
-
         //返回json的错误信息
         return mapTmp;
     }
 
 
+
+//    @RequestMapping("/queryName")
+//    public Object queryName(Integer id){
+//        return empService.queryAll(id);
+//    }
+
+
+    @RequestMapping("/queryName")
+    public Object queryname(@RequestBody  String eusername){
+        System.out.println(eusername);
+        return empService.queryname(eusername);
+    }
 }

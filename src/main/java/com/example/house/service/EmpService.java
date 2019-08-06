@@ -15,4 +15,9 @@ public interface EmpService {
     int insert(Emp record);
     List<Map> queryByEname(Map map);
 
+
+    Map queryAll(Integer id);
+    List<Emp> queryName(Emp emp);
+
+    Emp queryname(String eusername);
 }

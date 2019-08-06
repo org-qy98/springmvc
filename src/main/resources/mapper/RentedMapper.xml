@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.house.dao.RentedMapper">
+  <resultMap id="BaseResultMap" type="com.example.house.entity.Rented">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="renter" jdbcType="INTEGER" property="renter" />
+    <result column="houseid" jdbcType="INTEGER" property="houseid" />
+    <result column="begintime" jdbcType="DATE" property="begintime" />
+    <result column="endtime" jdbcType="DATE" property="endtime" />
+    <result column="charge" jdbcType="DOUBLE" property="charge" />
+    <result column="optdate" jdbcType="TIMESTAMP" property="optdate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, renter, houseid, begintime, endtime, charge, optdate
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from rented
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from rented
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.example.house.entity.Rented">
+    insert into rented (id, renter, houseid, 
+      begintime, endtime, charge, 
+      optdate)
+    values (#{id,jdbcType=INTEGER}, #{renter,jdbcType=INTEGER}, #{houseid,jdbcType=INTEGER}, 
+      #{begintime,jdbcType=DATE}, #{endtime,jdbcType=DATE}, #{charge,jdbcType=DOUBLE}, 
+      #{optdate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.house.entity.Rented">
+    insert into rented
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="renter != null">
+        renter,
+      </if>
+      <if test="houseid != null">
+        houseid,
+      </if>
+      <if test="begintime != null">
+        begintime,
+      </if>
+      <if test="endtime != null">
+        endtime,
+      </if>
+      <if test="charge != null">
+        charge,
+      </if>
+      <if test="optdate != null">
+        optdate,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="renter != null">
+        #{renter,jdbcType=INTEGER},
+      </if>
+      <if test="houseid != null">
+        #{houseid,jdbcType=INTEGER},
+      </if>
+      <if test="begintime != null">
+        #{begintime,jdbcType=DATE},
+      </if>
+      <if test="endtime != null">
+        #{endtime,jdbcType=DATE},
+      </if>
+      <if test="charge != null">
+        #{charge,jdbcType=DOUBLE},
+      </if>
+      <if test="optdate != null">
+        #{optdate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.house.entity.Rented">
+    update rented
+    <set>
+      <if test="renter != null">
+        renter = #{renter,jdbcType=INTEGER},
+      </if>
+      <if test="houseid != null">
+        houseid = #{houseid,jdbcType=INTEGER},
+      </if>
+      <if test="begintime != null">
+        begintime = #{begintime,jdbcType=DATE},
+      </if>
+      <if test="endtime != null">
+        endtime = #{endtime,jdbcType=DATE},
+      </if>
+      <if test="charge != null">
+        charge = #{charge,jdbcType=DOUBLE},
+      </if>
+      <if test="optdate != null">
+        optdate = #{optdate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.house.entity.Rented">
+    update rented
+    set renter = #{renter,jdbcType=INTEGER},
+      houseid = #{houseid,jdbcType=INTEGER},
+      begintime = #{begintime,jdbcType=DATE},
+      endtime = #{endtime,jdbcType=DATE},
+      charge = #{charge,jdbcType=DOUBLE},
+      optdate = #{optdate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="queryAll" resultType="map" parameterType="map">
+    SELECT r.begintime,r.charge,l.ladr,l.lname,z.name,l.id,s.* FROM rented r JOIN  leadhouse l on r.id=l.id  JOIN zujin z ON z.id=r.state JOIN  schedule s ON s.id=r.id
+    <where>
+      <if test="lname!=null and lname!=''">
+        and (lname like "%"#{lname}"%")
+      </if>
+      and r.state=2
+    </where> limit ${start},${pageSize}
+  </select>
+
+  <select id="queryPageCount" resultType="int">
+    SELECT count(*)
+    FROM rented r JOIN  leadhouse l on r.id=l.id  JOIN zujin z ON z.id=r.state JOIN  schedule s ON s.id=r.id
+    <where>
+      <if test="lname!=null and lname!=''">
+        and (lname like "%"#{lname}"%")
+      </if>
+      and r.state=2
+    </where>
+  </select>
+</mapper>

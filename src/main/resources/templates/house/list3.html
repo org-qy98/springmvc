@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html xmlns:el-table="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>vue-elementui</title>
+    <!--先引入vue.js库-->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!--axios-->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <style>
+        .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .avatar-uploader .el-upload:hover {
+            border-color: #409EFF;
+        }
+        .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 178px;
+            height: 178px;
+            line-height: 178px;
+            text-align: center;
+        }
+        .avatar {
+            width: 178px;
+            height: 178px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <el-row>
+        <el-form :inline="true" :model="formInline" class="demo-form-inline">
+            <el-form-item label="租金信息">
+                <el-input v-model="formInline.enamelname" placeholder="名字"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="onSubmit">查询</el-button>
+                <el-button type="primary" @click="flush">刷新</el-button>
+            </el-form-item>
+        </el-form>
+    </el-row>
+    <el-row>
+        <el-table
+                :data="tableData"
+                style="width: 100%">
+            <el-table-column
+                    prop="id"
+                    label="编号"
+                    width="180">
+            </el-table-column>
+            <el-table-column
+                    prop="ladr"
+                    label="地址"
+                    width="180">
+            </el-table-column>
+            <el-table-column
+                    prop="charge"
+                    label="租金">
+            </el-table-column>
+            <el-table-column
+                    prop="begintime"
+                    label="租金应缴日期">
+            </el-table-column>
+            <el-table-column
+                    prop="lname"
+                    label="租客名字">
+            </el-table-column>
+            <el-table-column
+                    prop="name"
+                    label="状态">
+            </el-table-column>
+            <el-table-column label="操作">
+                <template slot-scope="scope">
+                    <!--<el-button type="primary"-->
+                    <!--size="mini"-->
+                    <!--@click="handleEdit(scope.$index, scope.row)">缴费-->
+                    <!--</el-button>-->
+                    <el-button   size="mini"
+                                 type="danger"
+                                 @click="handleDelete(scope.$index, scope.row)">
+                        <i class="el-icon-delete">删除</i>
+                    </el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </el-row>
+    <el-row>
+        <el-pagination
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-sizes="[2,3,4,5,10,15,100, 200, 300, 400]"
+                :page-size="pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="total">
+        </el-pagination>
+    </el-row>
+</div>
+<script>
+    var vue=new Vue({
+        el:"#app",
+        data:{
+            tableData:[],
+            currentPage:1,
+            pageSize:3,
+            total:0,
+            formInline: {
+                enamelname: '',
+            },
+            options:[],
+            title:'',
+            dialogFormVisible:false,
+            form:{
+                state:'',
+                id:''
+            },
+            formLabelWidth: '120px',
+            pickerOptions: {
+                disabledDate:function(time) {
+                    return time.getTime() > Date.now();
+                },
+                shortcuts: [{
+                    text: '今天',
+                    onClick:function(picker) {
+                        picker.$emit('pick', new Date());
+                    }
+                }, {
+                    text: '昨天',
+                    onClick:function(picker) {
+                        const date = new Date();
+                        date.setTime(date.getTime() - 3600 * 1000 * 24);
+                        picker.$emit('pick', date);
+                    }
+                }, {
+                    text: '一周前',
+                    onClick:function(picker) {
+                        const date = new Date();
+                        date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+                        picker.$emit('pick', date);
+                    }
+                }]
+            },
+            url:'',
+            imageUrl: ''
+        },
+        created:function(){
+            this.loadData();
+        },
+        methods:{
+            loadData:function () {
+                var self=this;
+                //开始位置 (currentPage-1)*pageSize
+                var start=(this.currentPage-1)*this.pageSize;
+                axios.post('../Listhouse/page1',{start:start,pageSize:this.pageSize,
+                    lname:this.formInline.enamelname})
+                    .then(function (response) {
+                        // handle success
+                        console.log(response);
+                        //JSON.stringify  把json对象转换为json字符串
+                        console.log(JSON.stringify(response.data));
+                        //JSON.parse()把json字符串转换为json对象
+                        console.log(response);
+                        self.tableData=response.data.houseList;
+                        self.total=response.data.total;
+                    })
+                    .catch(function (error) {
+                        // handle error
+                        console.log(error);
+                    })
+                    .then(function () {
+                        // always executed
+                    })
+            },
+
+            handleSizeChange:function(val) {
+                console.log('每页条数:'+val);
+                this.pageSize=val;
+                this.loadData();
+            },
+            handleCurrentChange:function(val) {
+                console.log('当前页:'+ val);
+                this.currentPage=val;
+                this.loadData();
+            },
+            onSubmit:function() {
+                console.log('submit!');
+                this.loadData();
+            },
+            flush:function(){
+                this.pageSize=3;
+                this.currentPage=1;
+                this.formInline.enamelname='';
+                this.loadData();
+            },
+            toSave:function () {
+                this.title='员工添加';
+                this.url="/demo4/emp/save";
+                this.form={ename:'',deptno:'', sex: '男',job:'', empno:'',dname:'',hiredate:'',headPic:'',headPicName:''};
+                //让弹出框显示
+                this.dialogFormVisible=true;
+            },
+            handleEdit:function (index,row) {
+                // console.log(index,row);
+                row.state=2;
+                var self=this;
+                axios.post("../Listhouse/update",row)
+                    .then(function (response) {
+                        //添加或者修改成功
+                        if (response.data==1){
+                            self.$message({
+                                message: '恭喜你,缴费成功',
+                                type:'success'
+                            });
+                            //关闭弹出框
+                            // self.dialogFormVisible=false;
+                            //刷新页面
+                            self.loadData();
+                        }else {
+                            //添加或者修改错误
+                            self.$message.error('操作错误');
+                        }
+                    })
+
+
+            },
+            saveData:function(){
+                var self=this;
+                axios.post(this.url,this.form)
+                    .then(function (response) {
+                        //添加或者修改成功
+                        if (response.data==1){
+                            self.$message({
+                                message: '恭喜你,缴费成功',
+                                type:'success'
+                            });
+                            //关闭弹出框
+                            // self.dialogFormVisible=false;
+                            //刷新页面
+                            self.loadData();
+                        }else {
+                            //添加或者修改错误
+                            self.$message.error('操作错误');
+                        }
+                    })
+            },
+            handleDelete:function(index, row) {
+                console.log(index, row);
+                var self=this;
+                this.$confirm('此操作将永久删除该条数据, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(function() {
+                    axios.post("../Listhouse/delete?id="+row.id)
+                        .then(function (response) {
+                            //删除
+                            if(response.data==1){
+                                self.$message({
+                                    type: 'success',
+                                    message: '删除成功!'
+                                });
+                                //刷新页面
+                                self.loadData();
+                            }else{ //添加或者修改错误
+                                self.$message.error('错了哦， 操作错误');
+                            }
+                        })
+
+                }).catch(function() {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            }
+        }
+
+    });
+</script>
+</body>
+</html>

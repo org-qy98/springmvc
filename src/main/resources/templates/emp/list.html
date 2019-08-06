@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>日程列表</title>
+    <!--先引入vue.js库-->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!--axios-->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="../../house/js/jquery-2.1.3.js"></script>
+</head>
+<body>
+<div id="app">
+    <el-form :model="form">
+        <!--隐藏主键-->
+        <el-input v-model="form.id" type="hidden" autocomplete="off"></el-input>
+        <el-form-item label="提交内容" :label-width="formLabelWidth">
+            <el-input v-model="form.ename" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="提交内容" :label-width="formLabelWidth">
+            <el-input v-model="form.sname" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="提交内容" :label-width="formLabelWidth">
+            <el-input v-model="form.sname" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="提交内容" :label-width="formLabelWidth">
+            <el-input v-model="form.sname" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="提交内容" :label-width="formLabelWidth">
+            <el-input v-model="form.sname" autocomplete="off"></el-input>
+        </el-form-item>
+    </el-form>
+</div>
+<!--<script>-->
+    <!--$(function() {-->
+        <!--$.ajax({-->
+            <!--url:"/house/emp/session",-->
+            <!--type:"POST",-->
+            <!--dataType:"json",-->
+            <!--success:function (data1) {-->
+                <!--alert(data1.eusername);-->
+            <!--}-->
+        <!--})-->
+    <!--})-->
+<!--</script>-->
+<script>
+    var vue=new Vue( {
+        el:"#app",
+        data:{
+            form: {
+                sname: '',
+                state: ''
+            },
+            // formLabelWidth: '120px',
+            pickerOptions: {
+                disabledDate:function(time) {
+                    return time.getTime() > Date.now();
+                },
+                shortcuts: [{
+                    text: '今天',
+                    onClick:function(picker) {
+                        picker.$emit('pick', new Date());
+                    }
+                }, {
+                    text: '昨天',
+                    onClick:function(picker) {
+                        const date = new Date();
+                        date.setTime(date.getTime() - 3600 * 1000 * 24);
+                        picker.$emit('pick', date);
+                    }
+                }, {
+                    text: '一周前',
+                    onClick:function(picker) {
+                        const date = new Date();
+                        date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+                        picker.$emit('pick', date);
+                    }
+                }]
+            },
+        },created:function(){
+           this.saveData();
+        },
+        methods: {
+            saveData:function(){
+                var self=this;
+                this.form=response.data.eusername;
+                axios.post("../emp/queryname",this.form)
+                    .then(function (response) {
+                        // handle success
+                        console.log(response);
+                        //JSON.stringify  把json对象转换为json字符串
+                        console.log(JSON.stringify(response.data));
+                        //JSON.parse()把json字符串转换为json对象
+                        console.log(response);
+                        // self.tableData=response.data.empList;
+                        // self.total=response.data.total;
+                    })
+                    .catch(function (error) {
+                        // handle error
+                        console.log(error);
+                    })
+                    .then(function () {
+                        // always executed
+                    })
+            },
+        }
+    });
+</script>
+</body>
+</html>

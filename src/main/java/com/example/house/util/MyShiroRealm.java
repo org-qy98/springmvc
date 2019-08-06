@@ -39,12 +39,12 @@ public class MyShiroRealm extends AuthorizingRealm implements Serializable {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         //获取username
-        String ename = (String)token.getPrincipal();
+        String eusername = (String)token.getPrincipal();
         Session session = SecurityUtils.getSubject().getSession();
         Map map = new HashMap();
-        map.put("ename",ename);
-        map.put("start",0);
-        map.put("pageSize",100);
+        map.put("eusername",eusername);
+//        map.put("start",0);
+//        map.put("pageSize",100);
         //通过username查询密码
         List<Map> emps = empService.queryByEname(map);
         System.out.println(emps);

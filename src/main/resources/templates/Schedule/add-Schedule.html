@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>日程列表</title>
+    <!--先引入vue.js库-->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!--axios-->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+</head>
+<body>
+<div id="app">
+    <el-form :model="form">
+        <!--隐藏主键-->
+        <el-form-item label="提交内容" :label-width="formLabelWidth">
+            <el-input v-model="form.sname" autocomplete="off" type="textarea"></el-input>
+        </el-form-item>
+        <el-form-item label="发送日期" :label-width="formLabelWidth">
+            <el-date-picker
+                    v-model="form.state"
+                    align="right"
+                    type="date"
+                    placeholder="选择日期"
+                    :picker-options="pickerOptions">
+            </el-date-picker>
+        </el-form-item>
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="saveData">确定</el-button>
+        <el-button @click="resetForm('ruleForm')">重置</el-button>
+    </div>
+
+</div>
+<script>
+    var vue=new Vue( {
+        el:"#app",
+            data:{
+                form: {
+                    sname: '',
+                    state: ''
+                },
+                // formLabelWidth: '120px',
+                pickerOptions: {
+                    disabledDate:function(time) {
+                        return time.getTime() > Date.now();
+                    },
+                    shortcuts: [{
+                        text: '今天',
+                        onClick:function(picker) {
+                            picker.$emit('pick', new Date());
+                        }
+                    }, {
+                        text: '昨天',
+                        onClick:function(picker) {
+                            const date = new Date();
+                            date.setTime(date.getTime() - 3600 * 1000 * 24);
+                            picker.$emit('pick', date);
+                        }
+                    }, {
+                        text: '一周前',
+                        onClick:function(picker) {
+                            const date = new Date();
+                            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+                            picker.$emit('pick', date);
+                        }
+                    }]
+                },
+            },
+        methods: {
+            saveData:function( ){
+                var self=this;
+                axios.post("../schedule/insert",this.form)
+                    .then(function (response) {
+                        //添加或者修改成功
+                        if (response.data==1){
+                            self.$message({
+                                message: '通知客户,请用户查收',
+                                type:'success'
+                            });
+                            //刷新页面
+                            self.form= {sname: '', state: ''}
+                        }else {
+                            //添加或者修改错误
+                            self.$message.error('操作错误');
+                        }
+                    })
+            },
+            resetForm(formName) {
+                this.form= {sname: '', state: ''};
+            }
+        }
+    });
+</script>
+</body>
+</html>
